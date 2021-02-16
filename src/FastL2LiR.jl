@@ -8,10 +8,11 @@ Shuntaro C. Aoki modified and refactored the original implementation.
 
 module FastL2LiR
 
-export fit, predict
+export fit, predict, load_model
 
 using Statistics
 using LinearAlgebra
+using BrainDecoder
 
 struct FastL2LiRModel{T<:Real}
     W::Array{T}
@@ -119,6 +120,27 @@ function predict(model::FastL2LiRModel, X::Array{T, 2})::Array{T} where {T<:Real
     end
 
     return Y_pred
+end
+
+function load_model(model_dir::String)::FastL2LiRModel
+    """
+    Load FastL2LiR model.
+    """
+
+    # Load model
+    if isfile(joinpath(model_dir, "W.mat"))
+        W = load_array(joinpath(model_dir, "W.mat"), "W")
+    else
+        W = _load_chunks(model_dir, "W")
+    end
+
+    if isfile(joinpath(model_dir, "b.mat"))
+        b = load_array(joinpath(model_dir, "b.mat"), "b")
+    else
+        b = _load_chunks(model_dir, "b")
+    end
+
+    return FastL2LiRModel(W, b)
 end
 
 end # module FastL2LiR
