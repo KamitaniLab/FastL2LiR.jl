@@ -12,6 +12,7 @@ export fit, predict, load_model
 
 using Statistics
 using LinearAlgebra
+using Glob
 using BrainDecoder
 
 struct FastL2LiRModel{T<:Real}
@@ -126,6 +127,11 @@ function load_model(model_dir::String)::FastL2LiRModel
     """
     Load FastL2LiR model.
     """
+
+    function _load_chunks(dir, name)
+        files = sorted(glob(joinpath(dir, name, "*.mat")))
+        return cat([load_array(f) for f in files]..., dims=chunk_axis)
+    end
 
     # Load model
     if isfile(joinpath(model_dir, "W.mat"))
