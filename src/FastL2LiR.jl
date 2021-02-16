@@ -123,7 +123,7 @@ function predict(model::FastL2LiRModel, X::Array{T, 2})::Array{T} where {T<:Real
     return Y_pred
 end
 
-function load_model(model_dir::String)::FastL2LiRModel
+function load_model(model_dir::String; chunk_axis=0)::FastL2LiRModel
     """
     Load FastL2LiR model.
     """
